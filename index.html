@@ -1,41 +1,1673 @@
-<!doctype html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HirePilot AI V2</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HirePilot AI</title>
+
 <style>
-body{font-family:Arial;margin:0;background:#f5f6f8;color:#171717}header{background:#111827;color:#fff;padding:18px 24px}nav{padding:12px;background:#fff;border-bottom:1px solid #ddd}nav button{margin-right:6px;padding:9px;border:0;border-radius:7px}main{max-width:1200px;margin:auto;padding:20px}.panel{background:#fff;border:1px solid #ddd;border-radius:10px;padding:18px;margin-bottom:18px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.stat{background:#f8fafc;padding:15px;border:1px solid #e5e7eb;border-radius:8px}.stat b{display:block;font-size:24px;margin-top:5px}input,select,textarea{box-sizing:border-box;width:100%;padding:9px;border:1px solid #ccc;border-radius:6px;margin-top:4px}.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:10px}label{font-size:12px;color:#555}button.primary{background:#111827;color:#fff;padding:10px 14px;border:0;border-radius:7px;cursor:pointer}.hidden{display:none}.muted{color:#6b7280;font-size:13px}table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px solid #eee;text-align:left;font-size:13px}.result{border:1px solid #ddd;border-radius:8px;padding:10px;margin-top:8px}
-</style></head><body>
-<header><h2>HirePilot AI <small>V2 Prototype</small></h2><span id="top"></span></header>
-<nav><button onclick="show('dash')">Dashboard</button><button onclick="show('cand')">Candidates</button><button onclick="show('upload')">Bulk CV Upload</button><button onclick="show('search')">AI Search</button></nav>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f5f6f8;
+  color:#171717;
+}
+
+header{
+  background:#111827;
+  color:white;
+  padding:18px 24px;
+}
+
+header h1{
+  margin:0;
+  font-size:22px;
+}
+
+header small{
+  opacity:.7;
+}
+
+nav{
+  background:white;
+  padding:12px 24px;
+  border-bottom:1px solid #ddd;
+}
+
+nav button{
+  margin-right:8px;
+  padding:9px 14px;
+  border:0;
+  border-radius:7px;
+  cursor:pointer;
+  background:#f0f2f5;
+}
+
+nav button:hover{
+  background:#e2e5e9;
+}
+
+main{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+
+.panel{
+  background:white;
+  border:1px solid #ddd;
+  border-radius:10px;
+  padding:18px;
+  margin-bottom:18px;
+}
+
+.panel h2,
+.panel h3{
+  margin-top:0;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+.stat{
+  background:#f8fafc;
+  border:1px solid #e5e7eb;
+  border-radius:9px;
+  padding:16px;
+}
+
+.stat b{
+  display:block;
+  font-size:26px;
+  margin-top:8px;
+}
+
+.dash-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+.pending-grid{
+  grid-template-columns:repeat(4,1fr);
+}
+
+.filter-row{
+  margin-bottom:12px;
+}
+
+select,
+input,
+textarea{
+  width:100%;
+  padding:9px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  margin-top:5px;
+}
+
+select{
+  width:auto;
+  min-width:150px;
+}
+
+textarea{
+  resize:vertical;
+}
+
+label{
+  display:block;
+  margin-bottom:10px;
+}
+
+button.primary{
+  background:#111827;
+  color:white;
+  border:0;
+  border-radius:7px;
+  padding:10px 15px;
+  cursor:pointer;
+}
+
+button.primary:hover{
+  background:#273244;
+}
+
+.hidden{
+  display:none;
+}
+
+.muted{
+  color:#6b7280;
+}
+
+.pie-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:30px;
+  flex-wrap:wrap;
+}
+
+#performancePie{
+  width:280px;
+  height:280px;
+}
+
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:8px 0;
+}
+
+.legend-dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  display:inline-block;
+}
+
+.reminder{
+  border:1px solid #e5e7eb;
+  border-radius:8px;
+  padding:12px;
+  margin-bottom:9px;
+  background:#f8fafc;
+}
+
+.reminder small{
+  display:block;
+  color:#6b7280;
+  margin-top:5px;
+}
+
+.reminder button{
+  margin-top:7px;
+  padding:5px 9px;
+  border:0;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,
+td{
+  text-align:left;
+  padding:10px;
+  border-bottom:1px solid #ddd;
+  font-size:14px;
+}
+
+th{
+  background:#f8fafc;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.full{
+  grid-column:1/-1;
+}
+
+.candidate-actions{
+  margin-top:12px;
+}
+
+@media(max-width:800px){
+  .grid,
+  .dash-grid,
+  .pending-grid,
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>HirePilot AI <small>Recruitment Platform</small></h1>
+</header>
+
+<nav>
+  <button onclick="show('dash')">Dashboard</button>
+  <button onclick="show('cand')">Candidates</button>
+  <button onclick="show('upload')">Bulk CV Upload</button>
+  <button onclick="show('manual')">Add Candidate</button>
+  <button onclick="show('search')">AI Search</button>
+</nav>
+
 <main>
-<section id="dash"><div class="panel"><h2>Recruitment Dashboard</h2><div class="grid">
-<div class="stat">Candidates<b id="n">0</b></div><div class="stat">Expected CTC<b id="sal">0</b></div><div class="stat">≤30 Day Notice<b id="notice">0</b></div>
-</div></div><div class="panel"><h3>V2 included</h3><p>Expected/current CTC, hike, salary source, relevant experience, domain, notice period, recruiter notes, bulk upload, strict duplicate protection and natural-language search prototype.</p><p class="muted">TXT CVs are parsed in this offline prototype. PDF/DOCX parsing requires the production AI backend.</p></div></section>
 
-<section id="cand" class="hidden"><div class="panel"><h2>Candidates</h2><input id="q" oninput="render()" placeholder="Search name, company, domain, skill..."><br><br><div style="overflow:auto"><table><thead><tr><th>Name</th><th>Exp</th><th>Domain</th><th>Current</th><th>Expected</th><th>Notice</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div></div></section>
+<!-- DASHBOARD -->
 
-<section id="upload" class="hidden"><div class="panel"><h2>Bulk CV Upload</h2><p class="muted">Select multiple files. Existing candidates are blocked using email, phone, or name + company.</p>
-<input id="files" type="file" multiple accept=".txt,.pdf,.doc,.docx"><br><br><button class="primary" onclick="bulk()">Process CVs</button><div id="log"></div></div>
-<div class="panel"><h3>Manual / recruiter-confirmed profile</h3><div class="row">
-<div><label>Name</label><input id="name"></div><div><label>Email</label><input id="email"></div><div><label>Phone</label><input id="phone"></div><div><label>Location</label><input id="location"></div>
-<div><label>Current Company</label><input id="company"></div><div><label>Designation</label><input id="title"></div><div><label>Total Experience</label><input id="exp"></div><div><label>Relevant Experience</label><input id="rel"></div>
-<div><label>Industry / Domain</label><input id="domain"></div><div><label>Skills</label><input id="skills"></div><div><label>Current CTC (LPA)</label><input id="current"></div><div><label>Expected CTC (LPA)</label><input id="expected"></div>
-<div><label>Expected Hike %</label><input id="hike"></div><div><label>Salary Source</label><select id="source"><option>Candidate confirmed</option><option>Recruiter note</option><option>Estimated</option><option>Unknown</option></select></div><div><label>Notice Period</label><input id="np" placeholder="Immediate / 30 / 60 days"></div><div><label>Status</label><select id="status"><option>New</option><option>Screening</option><option>Shortlisted</option><option>Interview</option><option>Selected</option><option>Offer</option><option>Joined</option><option>Rejected</option></select></div></div>
-<label>Recruiter Notes</label><textarea id="notes"></textarea><br><br><button class="primary" onclick="manual()">Save Candidate</button></div></section>
+<section id="dash">
 
-<section id="search" class="hidden"><div class="panel"><h2>AI Candidate Search — Prototype</h2><textarea id="query" rows="4" placeholder="Find Mumbai candidates with 3-6 years automotive experience, expected below 10 LPA and max 30 days notice"></textarea><br><br><button class="primary" onclick="search()">Find Matches</button><div id="results"></div></div></section>
+<div class="panel">
+  <h2>Recruitment Dashboard</h2>
+
+  <div class="grid">
+
+    <div class="stat">
+      Open Jobs
+      <b id="openJobs">0</b>
+    </div>
+
+    <div class="stat">
+      Closed Jobs
+      <b id="closedJobs">0</b>
+    </div>
+
+    <div class="stat">
+      Hold Jobs
+      <b id="holdJobs">0</b>
+    </div>
+
+    <div class="stat">
+      Total Candidates
+      <b id="totalCandidates">0</b>
+    </div>
+
+  </div>
+</div>
+
+
+<div class="dash-grid">
+
+<!-- INDIVIDUAL PERFORMANCE -->
+
+<div class="panel">
+
+  <h3>Individual Performance</h3>
+
+  <div class="filter-row">
+    <label>
+      Performance Period
+      <select id="perfPeriod" onchange="renderPerformance()">
+        <option value="today">Today</option>
+        <option value="week">This Week</option>
+        <option value="month" selected>This Month</option>
+        <option value="all">All Time</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="pie-wrap">
+
+    <canvas id="performancePie"
+            width="280"
+            height="280">
+    </canvas>
+
+    <div id="pieLegend"></div>
+
+  </div>
+
+</div>
+
+
+<!-- REMINDERS -->
+
+<div class="panel">
+
+  <h3>Reminders</h3>
+
+  <div id="reminders"></div>
+
+  <button class="primary" onclick="addReminder()">
+    + Add Reminder
+  </button>
+
+</div>
+
+</div>
+
+
+<!-- PENDING WORK -->
+
+<div class="panel">
+
+  <h3>Pending Work</h3>
+
+  <div class="grid pending-grid">
+
+    <div class="stat">
+      CVs to Screen
+      <b id="pendingCV">0</b>
+    </div>
+
+    <div class="stat">
+      Follow-ups
+      <b id="pendingFollow">0</b>
+    </div>
+
+    <div class="stat">
+      Feedback Pending
+      <b id="pendingFeedback">0</b>
+    </div>
+
+    <div class="stat">
+      Offers Pending
+      <b id="pendingOffers">0</b>
+    </div>
+
+  </div>
+
+</div>
+
+</section>
+
+
+<!-- CANDIDATES -->
+
+<section id="cand" class="hidden">
+
+<div class="panel">
+
+<h2>Candidates</h2>
+
+<input
+  id="candidateSearch"
+  oninput="renderCandidates()"
+  placeholder="Search name, company, domain, skill, location..."
+>
+
+<br><br>
+
+<div style="overflow:auto">
+
+<table>
+
+<thead>
+<tr>
+<th>Name</th>
+<th>Experience</th>
+<th>Location</th>
+<th>Company</th>
+<th>Domain</th>
+<th>Current CTC</th>
+<th>Expected CTC</th>
+<th>Notice</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody id="candidateRows"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- BULK UPLOAD -->
+
+<section id="upload" class="hidden">
+
+<div class="panel">
+
+<h2>Bulk CV Upload</h2>
+
+<p class="muted">
+Upload multiple CVs. HirePilot will extract candidate information automatically.
+Duplicate candidates are blocked using email, phone and candidate identity.
+</p>
+
+<input
+  id="files"
+  type="file"
+  multiple
+  accept=".txt,.pdf,.doc,.docx"
+>
+
+<br><br>
+
+<button class="primary" onclick="bulkUpload()">
+Process CVs
+</button>
+
+<div id="uploadLog"></div>
+
+</div>
+
+</section>
+
+
+<!-- MANUAL CANDIDATE -->
+
+<section id="manual" class="hidden">
+
+<div class="panel">
+
+<h2>Add / Edit Candidate</h2>
+
+<div class="form-grid">
+
+<label>
+Name
+<input id="name">
+</label>
+
+<label>
+Email
+<input id="email">
+</label>
+
+<label>
+Phone
+<input id="phone">
+</label>
+
+<label>
+Location
+<input id="location">
+</label>
+
+<label>
+Current Company
+<input id="company">
+</label>
+
+<label>
+Current Designation
+<input id="designation">
+</label>
+
+<label>
+Total Experience
+<input id="exp" placeholder="e.g. 5 years">
+</label>
+
+<label>
+Relevant Experience
+<input id="rel" placeholder="e.g. 4 years">
+</label>
+
+<label>
+Industry / Domain
+<input id="domain" placeholder="Automotive, FMCG, IT etc.">
+</label>
+
+<label>
+Skills
+<input id="skills">
+</label>
+
+<label>
+Current CTC
+<input id="current" placeholder="e.g. 8 LPA">
+</label>
+
+<label>
+Expected CTC
+<input id="expected" placeholder="e.g. 10 LPA">
+</label>
+
+<label>
+Expected Hike %
+<input id="hike">
+</label>
+
+<label>
+Salary Source
+<select id="salarySource">
+<option>Candidate Confirmed</option>
+<option>Recruiter Note</option>
+<option>Estimated</option>
+<option>Unknown</option>
+</select>
+</label>
+
+<label>
+Notice Period
+<input id="np" placeholder="Immediate / 30 / 60 days">
+</label>
+
+<label>
+Status
+<select id="status">
+<option>New</option>
+<option>Shortlisted</option>
+<option>Interview</option>
+<option>Selected</option>
+<option>Offer</option>
+<option>Joined</option>
+<option>Rejected</option>
+</select>
+</label>
+
+<label class="full">
+Recruiter Notes
+<textarea id="notes" rows="4"></textarea>
+</label>
+
+</div>
+
+<br>
+
+<button class="primary" onclick="manualSave()">
+Save Candidate
+</button>
+
+</div>
+
+</section>
+
+
+<!-- AI SEARCH -->
+
+<section id="search" class="hidden">
+
+<div class="panel">
+
+<h2>AI Candidate Search</h2>
+
+<p class="muted">
+Search candidates using natural language.
+</p>
+
+<textarea
+  id="query"
+  rows="5"
+  placeholder="Example: Find Mumbai candidates with 3-6 years B2B automotive experience, current CTC below 8 LPA and notice period under 30 days."
+></textarea>
+
+<br><br>
+
+<button class="primary" onclick="aiSearch()">
+Find Matches
+</button>
+
+<div id="results"></div>
+
+</div>
+
+</section>
+
 </main>
+
+
 <script>
-const KEY='hirepilot_v2';let data=JSON.parse(localStorage.getItem(KEY)||'[]');
-const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-function save(){localStorage.setItem(KEY,JSON.stringify(data));stats();render()}
-function key(c){let e=(c.email||'').trim().toLowerCase(),p=(c.phone||'').replace(/\D/g,'');return e?'e:'+e:p?'p:'+p:'n:'+(c.name||'').trim().toLowerCase()+'|c:'+(c.company||'').trim().toLowerCase()}
-function dup(c){let k=key(c);return data.some(x=>x.key===k)}
-function stats(){$('n').textContent=data.length;$('top').textContent=data.length+' candidates';$('sal').textContent=data.filter(x=>x.expected).length;$('notice').textContent=data.filter(x=>{let n=String(x.np||'').toLowerCase();if(n.includes('immediate'))return true;let m=n.match(/\d+/);return m&&+m[0]<=30}).length}
-function show(id){['dash','cand','upload','search'].forEach(x=>$(x).classList.add('hidden'));$(id).classList.remove('hidden');stats();if(id==='cand')render()}
-function render(){let q=($('q')?.value||'').toLowerCase();let a=data.filter(c=>!q||JSON.stringify(c).toLowerCase().includes(q));$('rows').innerHTML=a.map(c=>'<tr><td><b>'+esc(c.name)+'</b><br>'+esc(c.location)+'</td><td>'+esc(c.exp||'—')+' / '+esc(c.rel||'—')+'</td><td>'+esc(c.domain||'—')+'</td><td>'+(c.current?c.current+' LPA':'—')+'</td><td>'+(c.expected?c.expected+' LPA':'—')+'</td><td>'+esc(c.np||'—')+'</td><td>'+esc(c.status||'New')+'</td></tr>').join('')||'<tr><td colspan="7">No candidates.</td></tr>'}
-function parse(t,file){let email=(t.match(/[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/)||[])[0]||'',phone=(t.match(/(?:\+91[ -]?)?[6-9]\d{9}/)||[])[0]||'',exp=(t.match(/(\d+(?:\.\d+)?)\s*\+?\s*(?:years|yrs)/i)||[])[1]||'',cur=(t.match(/(?:current\s*(?:ctc|salary)|ctc)\D{0,20}(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?)/i)||[])[1]||'',ex=(t.match(/(?:expected\s*(?:ctc|salary)|expectation)\D{0,20}(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?)/i)||[])[1]||'',np=(t.match(/notice\s*period\D{0,15}([^\n,;]+)/i)||[])[1]||'';return {name:file.replace(/\.[^.]+$/,''),email,phone,exp,rel:'',company:'',domain:'',skills:'',location:'',current:cur,expected:ex,hike:'',source:ex?'Candidate confirmed':'Unknown',np,status:'New',notes:'Imported from CV',key:''}}
-async function bulk(){let fs=[...$('files').files],a=[];for(let f of fs){if(!f.name.toLowerCase().endsWith('.txt')){a.push('<div class=result>Needs production parser: '+esc(f.name)+'</div>');continue}let c=parse(await f.text(),f.name);c.key=key(c);if(dup(c))a.push('<div class=result><b>BLOCKED DUPLICATE:</b> '+esc(c.name)+'</div>');else{data.push(c);a.push('<div class=result>Added: '+esc(c.name)+'</div>')}}save();$('log').innerHTML='<p><b>Batch complete.</b></p>'+a.join('')}
-function manual(){let c={name:$('name').value,email:$('email').value,phone:$('phone').value,location:$('location').value,company:$('company').value,title:$('title').value,exp:$('exp').value,rel:$('rel').value,domain:$('domain').value,skills:$('skills').value,current:$('current').value,expected:$('expected').value,hike:$('hike').value,source:$('source').value,np:$('np').value,status:$('status').value,notes:$('notes').value};c.key=key(c);if(!c.name)return alert('Name is required');if(dup(c))return alert('UPLOAD BLOCKED: candidate already exists.');data.push(c);save();alert('Candidate saved');show('cand')}
-function search(){let q=$('query').value.toLowerCase(),terms=q.split(/[^a-z0-9]+/).filter(x=>x.length>2),r=data.map(c=>{let h=JSON.stringify(c).toLowerCase(),score=terms.filter(t=>h.includes(t)).length;let m=q.match(/(?:under|below)\s*(\d+(?:\.\d+)?)\s*lpa/i);if(m&&c.expected&&+c.expected<=+m[1])score+=2;return {c,score}}).filter(x=>x.score).sort((a,b)=>b.score-a.score);$('results').innerHTML=r.slice(0,30).map(x=>'<div class=result><b>'+esc(x.c.name)+'</b> — '+x.score+' match points<br>'+esc(x.c.location)+' · '+esc(x.c.domain)+' · '+esc(x.c.exp)+' yrs · Expected '+(x.c.expected?esc(x.c.expected)+' LPA':'unknown')+' · Notice '+esc(x.c.np||'unknown')+'</div>').join('')||'<p>No matches found.</p>'}
-show('dash');
-</script></body></html>
+
+const STORAGE_KEY = "hirepilot_candidates";
+
+let data = JSON.parse(
+  localStorage.getItem(STORAGE_KEY) || "[]"
+);
+
+let reminders = JSON.parse(
+  localStorage.getItem("hirepilot_reminders") || "[]"
+);
+
+
+/* DEMO JOB DATA */
+
+let jobs = JSON.parse(
+  localStorage.getItem("hirepilot_jobs") || "null"
+);
+
+if(!jobs){
+
+  jobs = [
+
+    {
+      title:"BDE - Rewards & Gifting",
+      status:"Open"
+    },
+
+    {
+      title:"Market Development In-charge",
+      status:"Open"
+    },
+
+    {
+      title:"Technical Lead",
+      status:"Hold"
+    },
+
+    {
+      title:"Front End Developer",
+      status:"Closed"
+    }
+
+  ];
+
+  localStorage.setItem(
+    "hirepilot_jobs",
+    JSON.stringify(jobs)
+  );
+}
+
+
+/* HELPERS */
+
+function $(id){
+  return document.getElementById(id);
+}
+
+
+function esc(value){
+
+  return String(value || "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
+
+
+function saveData(){
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(data)
+  );
+
+  renderDashboard();
+  renderCandidates();
+
+}
+
+
+/* NAVIGATION */
+
+function show(id){
+
+  ["dash","cand","upload","manual","search"]
+    .forEach(section => {
+
+      $(section).classList.add("hidden");
+
+    });
+
+  $(id).classList.remove("hidden");
+
+  if(id==="dash"){
+    renderDashboard();
+  }
+
+  if(id==="cand"){
+    renderCandidates();
+  }
+
+}
+
+
+/* DASHBOARD */
+
+function renderDashboard(){
+
+  const open =
+    jobs.filter(j => j.status === "Open").length;
+
+  const closed =
+    jobs.filter(j => j.status === "Closed").length;
+
+  const hold =
+    jobs.filter(j => j.status === "Hold").length;
+
+  $("openJobs").textContent = open;
+  $("closedJobs").textContent = closed;
+  $("holdJobs").textContent = hold;
+  $("totalCandidates").textContent = data.length;
+
+
+  /* Pending Work */
+
+  $("pendingCV").textContent =
+    data.filter(c =>
+      !c.status || c.status === "New"
+    ).length;
+
+
+  $("pendingFollow").textContent =
+    data.filter(c =>
+      String(c.notes || "")
+        .toLowerCase()
+        .includes("follow")
+    ).length;
+
+
+  $("pendingFeedback").textContent =
+    data.filter(c =>
+      c.status === "Interview"
+    ).length;
+
+
+  $("pendingOffers").textContent =
+    data.filter(c =>
+      c.status === "Offer"
+    ).length;
+
+
+  renderPerformance();
+  renderReminders();
+
+}
+
+
+/* PERFORMANCE PIE CHART */
+
+function renderPerformance(){
+
+  const canvas = $("performancePie");
+
+  const ctx =
+    canvas.getContext("2d");
+
+  ctx.clearRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+
+  const period =
+    $("perfPeriod").value;
+
+  const now = new Date();
+
+
+  function inPeriod(candidate){
+
+    if(period === "all"){
+      return true;
+    }
+
+    if(!candidate.dateAdded){
+      return period === "all";
+    }
+
+    const date =
+      new Date(candidate.dateAdded);
+
+
+    if(period === "today"){
+
+      return date.toDateString() ===
+             now.toDateString();
+
+    }
+
+
+    if(period === "week"){
+
+      const start = new Date(now);
+
+      start.setDate(
+        now.getDate() - now.getDay()
+      );
+
+      start.setHours(0,0,0,0);
+
+      return date >= start;
+
+    }
+
+
+    if(period === "month"){
+
+      return (
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear()
+      );
+
+    }
+
+    return true;
+
+  }
+
+
+  const filtered =
+    data.filter(inPeriod);
+
+
+  const values = [
+
+    [
+      "CV Screened",
+      filtered.length
+    ],
+
+    [
+      "Shortlisted",
+      filtered.filter(c =>
+        [
+          "Shortlisted",
+          "Interview",
+          "Selected",
+          "Offer",
+          "Joined"
+        ].includes(c.status)
+      ).length
+    ],
+
+    [
+      "Interviews",
+      filtered.filter(c =>
+        [
+          "Interview",
+          "Selected",
+          "Offer",
+          "Joined"
+        ].includes(c.status)
+      ).length
+    ],
+
+    [
+      "Selected",
+      filtered.filter(c =>
+        [
+          "Selected",
+          "Offer",
+          "Joined"
+        ].includes(c.status)
+      ).length
+    ]
+
+  ];
+
+
+  const colors = [
+    "#2563eb",
+    "#16a34a",
+    "#f59e0b",
+    "#7c3aed"
+  ];
+
+
+  const total =
+    values.reduce(
+      (sum,item) => sum + item[1],
+      0
+    ) || 1;
+
+
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+  const radius = 100;
+
+  let start =
+    -Math.PI / 2;
+
+
+  values.forEach((item,index)=>{
+
+    const angle =
+      (item[1] / total) *
+      Math.PI *
+      2;
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(cx,cy);
+
+    ctx.arc(
+      cx,
+      cy,
+      radius,
+      start,
+      start + angle
+    );
+
+    ctx.closePath();
+
+    ctx.fillStyle =
+      colors[index];
+
+    ctx.fill();
+
+    start += angle;
+
+  });
+
+
+  /* CENTER */
+
+  ctx.beginPath();
+
+  ctx.arc(
+    cx,
+    cy,
+    48,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fillStyle = "white";
+
+  ctx.fill();
+
+
+  $("pieLegend").innerHTML =
+    values.map((item,index)=>`
+
+      <div class="legend-item">
+
+        <span
+          class="legend-dot"
+          style="background:${colors[index]}"
+        ></span>
+
+        ${esc(item[0])}:
+        <b>${item[1]}</b>
+
+      </div>
+
+    `).join("");
+
+}
+
+
+/* REMINDERS */
+
+function renderReminders(){
+
+  if(!reminders.length){
+
+    $("reminders").innerHTML =
+      '<p class="muted">No reminders yet.</p>';
+
+    return;
+
+  }
+
+
+  $("reminders").innerHTML =
+    reminders
+      .map((r,index)=>`
+
+        <div class="reminder">
+
+          <b>${esc(r.title)}</b>
+
+          <small>
+            ${esc(r.when)}
+          </small>
+
+          <button
+            onclick="deleteReminder(${index})"
+          >
+            Done
+          </button>
+
+        </div>
+
+      `)
+      .join("");
+
+}
+
+
+function addReminder(){
+
+  const title =
+    prompt("Reminder for?");
+
+  if(!title){
+    return;
+  }
+
+
+  const when =
+    prompt("When? Example: Today 3 PM");
+
+  if(!when){
+    return;
+  }
+
+
+  reminders.unshift({
+    title:title,
+    when:when
+  });
+
+
+  localStorage.setItem(
+    "hirepilot_reminders",
+    JSON.stringify(reminders)
+  );
+
+
+  renderReminders();
+
+}
+
+
+function deleteReminder(index){
+
+  reminders.splice(index,1);
+
+  localStorage.setItem(
+    "hirepilot_reminders",
+    JSON.stringify(reminders)
+  );
+
+  renderReminders();
+
+}
+
+
+/* CANDIDATE TABLE */
+
+function renderCandidates(){
+
+  const search =
+    String(
+      $("candidateSearch")?.value || ""
+    ).toLowerCase();
+
+
+  const filtered =
+    data.filter(c => {
+
+      const text = [
+
+        c.name,
+        c.email,
+        c.phone,
+        c.location,
+        c.company,
+        c.designation,
+        c.domain,
+        c.skills,
+        c.current,
+        c.expected,
+        c.np
+
+      ]
+      .join(" ")
+      .toLowerCase();
+
+
+      return text.includes(search);
+
+    });
+
+
+  $("candidateRows").innerHTML =
+    filtered.map(c=>`
+
+      <tr>
+
+        <td>${esc(c.name)}</td>
+
+        <td>${esc(c.exp)}</td>
+
+        <td>${esc(c.location)}</td>
+
+        <td>${esc(c.company)}</td>
+
+        <td>${esc(c.domain)}</td>
+
+        <td>${esc(c.current)}</td>
+
+        <td>${esc(c.expected)}</td>
+
+        <td>${esc(c.np)}</td>
+
+        <td>${esc(c.status)}</td>
+
+      </tr>
+
+    `).join("");
+
+}
+
+
+/* MANUAL CANDIDATE */
+
+function manualSave(){
+
+  const candidate = {
+
+    dateAdded:new Date().toISOString(),
+
+    name:$("name").value.trim(),
+
+    email:$("email").value.trim(),
+
+    phone:$("phone").value.trim(),
+
+    location:$("location").value.trim(),
+
+    company:$("company").value.trim(),
+
+    designation:$("designation").value.trim(),
+
+    exp:$("exp").value.trim(),
+
+    rel:$("rel").value.trim(),
+
+    domain:$("domain").value.trim(),
+
+    skills:$("skills").value.trim(),
+
+    current:$("current").value.trim(),
+
+    expected:$("expected").value.trim(),
+
+    hike:$("hike").value.trim(),
+
+    salarySource:$("salarySource").value,
+
+    np:$("np").value.trim(),
+
+    status:$("status").value,
+
+    notes:$("notes").value.trim()
+
+  };
+
+
+  if(!candidate.name){
+
+    alert("Candidate name is required.");
+
+    return;
+
+  }
+
+
+  if(isDuplicate(candidate)){
+
+    alert(
+      "Duplicate candidate blocked. This candidate already exists."
+    );
+
+    return;
+
+  }
+
+
+  data.push(candidate);
+
+  saveData();
+
+  alert("Candidate saved successfully.");
+
+  clearManualForm();
+
+  show("cand");
+
+}
+
+
+function clearManualForm(){
+
+  [
+    "name",
+    "email",
+    "phone",
+    "location",
+    "company",
+    "designation",
+    "exp",
+    "rel",
+    "domain",
+    "skills",
+    "current",
+    "expected",
+    "hike",
+    "np",
+    "notes"
+  ].forEach(id=>{
+    $(id).value="";
+  });
+
+}
+
+
+/* DUPLICATE PROTECTION */
+
+function normalise(value){
+
+  return String(value || "")
+    .trim()
+    .toLowerCase();
+
+}
+
+
+function isDuplicate(candidate){
+
+  const email =
+    normalise(candidate.email);
+
+  const phone =
+    normalise(candidate.phone);
+
+  const name =
+    normalise(candidate.name);
+
+  const company =
+    normalise(candidate.company);
+
+
+  return data.some(existing=>{
+
+    if(
+      email &&
+      normalise(existing.email) === email
+    ){
+      return true;
+    }
+
+
+    if(
+      phone &&
+      normalise(existing.phone) === phone
+    ){
+      return true;
+    }
+
+
+    if(
+      name &&
+      company &&
+      normalise(existing.name) === name &&
+      normalise(existing.company) === company
+    ){
+      return true;
+    }
+
+
+    return false;
+
+  });
+
+}
+
+
+/* CV PARSING */
+
+function parseCV(text,filename){
+
+  const lower =
+    text.toLowerCase();
+
+
+  function find(pattern){
+
+    const match =
+      text.match(pattern);
+
+    return match ?
+      match[1].trim() :
+      "";
+
+  }
+
+
+  return {
+
+    dateAdded:
+      new Date().toISOString(),
+
+    name:
+      find(/(?:name|candidate name)\s*[:\-]\s*([^\n]+)/i)
+      || filename.replace(/\.[^/.]+$/,""),
+
+    email:
+      find(/([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i),
+
+    phone:
+      find(/(\+?\d[\d\s\-]{8,}\d)/),
+
+    location:
+      find(/(?:location|city)\s*[:\-]\s*([^\n]+)/i),
+
+    company:
+      find(/(?:current company|company)\s*[:\-]\s*([^\n]+)/i),
+
+    designation:
+      find(/(?:designation|current designation)\s*[:\-]\s*([^\n]+)/i),
+
+    exp:
+      find(/(?:total experience|experience)\s*[:\-]\s*([^\n]+)/i),
+
+    rel:
+      find(/(?:relevant experience)\s*[:\-]\s*([^\n]+)/i),
+
+    domain:
+      find(/(?:industry|domain)\s*[:\-]\s*([^\n]+)/i),
+
+    skills:
+      find(/(?:skills|technical skills)\s*[:\-]\s*([^\n]+)/i),
+
+    current:
+      find(/(?:current ctc|current salary)\s*[:\-]\s*([^\n]+)/i),
+
+    expected:
+      find(/(?:expected ctc|expected salary)\s*[:\-]\s*([^\n]+)/i),
+
+    hike:
+      find(/(?:expected hike|hike)\s*[:\-]\s*([^\n]+)/i),
+
+    salarySource:
+      "Unknown",
+
+    np:
+      find(/(?:notice period|notice)\s*[:\-]\s*([^\n]+)/i),
+
+    status:
+      "New",
+
+    notes:
+      "Imported from CV: " + filename
+
+  };
+
+}
+
+
+/* BULK UPLOAD */
+
+async function bulkUpload(){
+
+  const files =
+    Array.from(
+      $("files").files || []
+    );
+
+
+  if(!files.length){
+
+    alert("Please select CV files.");
+
+    return;
+
+  }
+
+
+  let processed = 0;
+  let blocked = 0;
+
+
+  $("uploadLog").innerHTML =
+    "<p>Processing CVs...</p>";
+
+
+  for(const file of files){
+
+    try{
+
+      const extension =
+        file.name
+          .split(".")
+          .pop()
+          .toLowerCase();
+
+
+      /*
+       PDF/DOC/DOCX require a production
+       parser/backend. TXT works in this
+       offline prototype.
+      */
+
+      if(extension !== "txt"){
+
+        blocked++;
+
+        $("uploadLog").innerHTML +=
+          `<p>
+            ${esc(file.name)}:
+            PDF/DOC/DOCX detected. Production AI parser required.
+          </p>`;
+
+        continue;
+
+      }
+
+
+      const text =
+        await file.text();
+
+
+      const candidate =
+        parseCV(
+          text,
+          file.name
+        );
+
+
+      if(isDuplicate(candidate)){
+
+        blocked++;
+
+        $("uploadLog").innerHTML +=
+          `<p>
+            ${esc(file.name)}:
+            Duplicate blocked.
+          </p>`;
+
+        continue;
+
+      }
+
+
+      data.push(candidate);
+
+      processed++;
+
+
+      $("uploadLog").innerHTML +=
+        `<p>
+          ${esc(file.name)}:
+          Candidate added.
+        </p>`;
+
+    }
+
+    catch(error){
+
+      blocked++;
+
+      $("uploadLog").innerHTML +=
+        `<p>
+          ${esc(file.name)}:
+          Unable to process.
+        </p>`;
+
+    }
+
+  }
+
+
+  saveData();
+
+
+  $("uploadLog").innerHTML +=
+    `<hr>
+     <p>
+       <b>${processed}</b> candidates added.
+       <b>${blocked}</b> files blocked/skipped.
+     </p>`;
+
+}
+
+
+/* AI SEARCH PROTOTYPE */
+
+function aiSearch(){
+
+  const query =
+    $("query")
+      .value
+      .toLowerCase()
+      .trim();
+
+
+  if(!query){
+
+    alert("Enter a candidate search requirement.");
+
+    return;
+
+  }
+
+
+  const words =
+    query
+      .split(/\s+/)
+      .filter(word => word.length > 2);
+
+
+  const results =
+    data.map(candidate=>{
+
+      const text = [
+
+        candidate.name,
+        candidate.location,
+        candidate.company,
+        candidate.designation,
+        candidate.domain,
+        candidate.skills,
+        candidate.exp,
+        candidate.rel,
+        candidate.current,
+        candidate.expected,
+        candidate.np
+
+      ]
+      .join(" ")
+      .toLowerCase();
+
+
+      let score = 0;
+
+
+      words.forEach(word=>{
+
+        if(text.includes(word)){
+          score++;
+        }
+
+      });
+
+
+      return {
+        candidate,
+        score
+      };
+
+    })
+    .filter(item=>item.score > 0)
+    .sort(
+      (a,b)=>b.score-a.score
+    );
+
+
+  if(!results.length){
+
+    $("results").innerHTML =
+      "<p class='muted'>No matching candidates found.</p>";
+
+    return;
+
+  }
+
+
+  $("results").innerHTML = `
+
+    <div class="panel">
+
+      <h3>
+        Matching Candidates
+      </h3>
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Experience</th>
+            <th>Company</th>
+            <th>Domain</th>
+            <th>Current CTC</th>
+            <th>Expected CTC</th>
+            <th>Match</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${results.map(item=>{
+
+            const c =
+              item.candidate;
+
+            return `
+
+              <tr>
+
+                <td>${esc(c.name)}</td>
+
+                <td>${esc(c.location)}</td>
+
+                <td>${esc(c.exp)}</td>
+
+                <td>${esc(c.company)}</td>
+
+                <td>${esc(c.domain)}</td>
+
+                <td>${esc(c.current)}</td>
+
+                <td>${esc(c.expected)}</td>
+
+                <td>${item.score}</td>
+
+              </tr>
+
+            `;
+
+          }).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
+}
+
+
+/* INITIAL LOAD */
+
+renderDashboard();
+renderCandidates();
+
+</script>
+
+</body>
+</html>
